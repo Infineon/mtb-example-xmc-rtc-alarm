@@ -4,7 +4,7 @@ This code example demonstrates an RTC alarm interrupt of 1 minute to set a perio
 
 ## Requirements
 
-- [ModusToolbox® software](https://www.cypress.com/products/modustoolbox-software-environment) v2.3
+- [ModusToolbox&trade; software](https://www.cypress.com/products/modustoolbox-software-environment) v2.3
 - [SEGGER J-Link software](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 - Programming Language: C
 - Associated Parts: All [XMC™ MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/) parts
@@ -100,13 +100,23 @@ Various CLI tools include a `-h` option that prints help information to the term
 
    2. In the **Quick Panel**, scroll down, and click **\<Application Name> Program (JLink)**.
 
-3. Confirm that the kit LED blinks at approximately 2 Hz due to SysTick interrupt. The RTC is configured to generate an alarm after 1 minute.
+3. Confirm that the kit LED blinks at approximately 2 Hz due to the SysTick interrupt. The RTC is configured to generate an alarm after 1 minute.
 
 4. Confirm that the kit LED stops blinking and remains glowing after 1 minute.
 
 ## Debugging
 
 You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (JLink)** configuration in the **Quick Panel**. For more details, see the "Program and Debug" section in the [Eclipse IDE for ModusToolbox User Guide](https://www.cypress.com/MTBEclipseIDEUserGuide).
+
+## Design and implementation
+
+The code consists of the following steps:
+
+- **Step 1:** Initializes the RTC module with the `rtc_config` structure containing the alarm time and the clock divider.
+
+- **Step 2:** Provides the initialization and enabling of the RTC alarm event interrupt and SysTick interrupt. The SysTick interrupt handler function (`SysTick_Handler()`) is used to toggle the user LED approximately every 500 ms. The RTC Interrupt handler function (`alarm_handler()`) stops the SysTick timer and sets the `timer_interrupt_flag` variable to TRUE which is used in Step 3.
+
+- **Step 3:**  Consists of the start of the RTC module using the `XMC_RTC_Start()` function and the endless `while` loop. In the `while` loop, as soon the RTC alarm event occurs, the precondition (`timer_interrupt_flag = TRUE`) is fullfilled to set the output of the LED to HIGH. Afterward, the LED remains glowing.
 
 ## Related Resources
 
@@ -139,6 +149,7 @@ Document Title: *CE232574* - *XMC MCU: RTC Alarm*
 | Version | Description of Change |
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
+| 1.0.1   | Updated README        |
 ------
 
 All other trademarks or registered trademarks referenced herein are the property of their respective owners.
