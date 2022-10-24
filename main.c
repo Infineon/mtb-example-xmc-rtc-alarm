@@ -41,6 +41,7 @@
 #include "cy_utils.h"
 #include "xmc_rtc.h"
 #include "xmc_scu.h"
+#include "xmc_device.h"
 
 /*******************************************************************************
 * Macros
@@ -52,13 +53,13 @@
 /*USER LED toggle period in milliseconds*/
 #define TICKS_WAIT                      500
 
-#ifdef  TARGET_KIT_XMC14_BOOT_001
+#if (UC_SERIES == XMC14)
 #define RTC_INTERRUPT_EVENT_IRQN        IRQ1_IRQn
 #define RTC_INTERRUPT_EVENT_PRIORITY    3
 #define alarm_handler                   IRQ1_Handler
 #endif
 
-#ifdef  TARGET_KIT_XMC47_RELAX_V1
+#if (UC_FAMILY == XMC4)
 #define RTC_INTERRUPT_EVENT_IRQN        SCU_0_IRQn
 #define RTC_INTERRUPT_EVENT_PRIORITY    63
 #endif
@@ -76,8 +77,8 @@ static volatile bool timer_interrupt_flag = false;
 /*Structure for RTC configuration*/
 XMC_RTC_CONFIG_t rtc_config =
 {
-    .alarm.minutes = 1U,      /*Alarm minutes compare value*/ 
-    .prescaler = 0x7fffU      /*Clock divider(prescaler) configurations*/
+    .alarm.minutes = 1U,          /*Alarm minutes compare value*/ 
+    .prescaler     = 0x7fffU      /*Clock divider(prescaler) configurations*/
 };
 
 /*******************************************************************************
@@ -93,6 +94,7 @@ XMC_RTC_CONFIG_t rtc_config =
 *  none
 *
 *******************************************************************************/
+
 void SysTick_Handler(void)
 {
     ticks++;
@@ -136,7 +138,7 @@ void alarm_handler(void)
 *  none
 *
 *******************************************************************************/
-#ifdef TARGET_KIT_XMC47_RELAX_V1
+#if (UC_FAMILY == XMC4)
 void SCU_0_IRQHandler(void)
 {
     XMC_SCU_IRQHandler(0);
@@ -159,6 +161,7 @@ void SCU_0_IRQHandler(void)
 *  int
 *
 *******************************************************************************/
+
 int main(void)
 {
     cy_rslt_t result;
@@ -173,7 +176,7 @@ int main(void)
     /*Stop the Already running RTC for new configuration*/
     XMC_RTC_Stop();
 
-    #ifdef TARGET_KIT_XMC47_RELAX_V1
+    #if (UC_FAMILY == XMC4)
     /*Enable Hibernate Domain*/
     XMC_SCU_HIB_EnableHibernateDomain();
     XMC_SCU_HIB_SetRtcClockSource(XMC_SCU_HIB_RTCCLKSRC_OSI);
@@ -185,13 +188,13 @@ int main(void)
     /*Enable the  RTC  Event*/
     XMC_RTC_EnableEvent(XMC_RTC_EVENT_ALARM);
 
-    #ifdef TARGET_KIT_XMC47_RELAX_V1
+    #if (UC_FAMILY == XMC4)
     XMC_SCU_INTERRUPT_SetEventHandler(XMC_SCU_INTERRUPT_EVENT_RTC_ALARM, alarm_handler);
     /*Set the Priority for Interrupt*/
     NVIC_SetPriority(RTC_INTERRUPT_EVENT_IRQN, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), RTC_INTERRUPT_EVENT_PRIORITY, 0));
     #endif
 
-    #ifdef TARGET_KIT_XMC14_BOOT_001
+    #if (UC_FAMILY == XMC1)
     /*Set the Priority for Interrupt*/
     NVIC_SetPriority(RTC_INTERRUPT_EVENT_IRQN, RTC_INTERRUPT_EVENT_PRIORITY);
     #endif
@@ -218,15 +221,16 @@ int main(void)
             /*Clear the flag*/
             timer_interrupt_flag = false;
             /*Set to User LED state*/
-            #ifdef TARGET_KIT_XMC14_BOOT_001
+
+            #if (UC_FAMILY == XMC1)
             XMC_GPIO_SetOutputLow(CYBSP_USER_LED_PORT, CYBSP_USER_LED_PIN);
             #endif
 
-            #ifdef TARGET_KIT_XMC47_RELAX_V1
+            #if (UC_FAMILY == XMC4)
             XMC_GPIO_SetOutputHigh(CYBSP_USER_LED_PORT, CYBSP_USER_LED_PIN);
             #endif
-        }
 
+        }
     }
 }
 
