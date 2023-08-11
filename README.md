@@ -152,6 +152,8 @@ For a list of supported IDEs and more details, see the "Exporting to IDEs" secti
 
 4. Confirm that the kit LED stops blinking and remains glowing after a minute.
 
+**Note:** In order to reset RTC to test the CE again after programming the first time, remove the cable for some time and then reconnect it. For KIT_XMC_PLT2GO_XMC4200 and KIT_XMC_PLT2GO_XMC4400 kits wait for approximately 10 minutes after removing the cable, since RTC is powered by Vbat.
+
 ## Debugging
 
 You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (JLink)** configuration in the **Quick Panel**. For more details, see the "Program and debug" section in the [Eclipse IDE for ModusToolbox&trade; user guide](https://www.infineon.com/MTBEclipseIDEUserGuide).
@@ -192,6 +194,7 @@ Document title: *CE232574* - *XMC&trade; MCU: RTC alarm*
 | 1.1.0   | Added support for new kits        |
 | 2.0.0   | Updated to support ModusToolbox&trade; software v3.0; CE will not be backwards compatible with previous versions of ModusToolbox™ software. |
 | 2.1.0   | Added support for RTC personality |
+| 2.2.0   | RTC init sequence updated |
 ------
 
 All other trademarks or registered trademarks referenced herein are the property of their respective owners.

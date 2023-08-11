@@ -181,9 +181,6 @@ int main(void)
         CY_ASSERT(0);
     }
 
-    /* Stop the Already running RTC for new configuration */
-    XMC_RTC_Stop();
-
     /* Initialize printf retarget */
     cy_retarget_io_init(CYBSP_DEBUG_UART_HW);
 
